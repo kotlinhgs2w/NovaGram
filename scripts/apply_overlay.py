@@ -61,6 +61,12 @@ def main() -> None:
         r"\1NovaGram\2",
         "app display name",
     )
+    replace_once(
+        strings,
+        r'(<string name="AppNameBeta">).*?(</string>)',
+        r"\1NovaGram\2",
+        "debug app display name",
+    )
     replace_once(build_vars, r"public static int APP_ID = [0-9]+;",
                  f"public static int APP_ID = {api_id};", "Telegram API ID")
     replace_once(build_vars, r'public static String APP_HASH = "[a-fA-F0-9]+";',
@@ -81,6 +87,30 @@ def main() -> None:
         destination = java_root / java_file.relative_to(overlay_root)
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(java_file, destination)
+
+    resource_overlay = Path(__file__).resolve().parents[1] / "overlay" / "res"
+    resource_root = source / "TMessagesProj/src/main/res"
+    for resource_file in resource_overlay.rglob("*"):
+        if resource_file.is_file():
+            destination = resource_root / resource_file.relative_to(resource_overlay)
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(resource_file, destination)
+
+    for manifest in (
+        source / "TMessagesProj/config/debug/AndroidManifest.xml",
+        source / "TMessagesProj/config/release/AndroidManifest.xml",
+    ):
+        if not manifest.is_file():
+            raise SystemExit(f"Expected app manifest is missing: {manifest}")
+        replace_once(manifest, r'android:icon="@mipmap/ic_launcher"',
+                     'android:icon="@mipmap/ic_novagram"', "launcher icon")
+        replace_once(manifest, r'android:roundIcon="@mipmap/ic_launcher_round"',
+                     'android:roundIcon="@mipmap/ic_novagram_round"', "round launcher icon")
+        add_modification_notice(
+            manifest,
+            "Modified by NovaGram on 2026-11-22: application label and launcher icons.",
+            xml=True,
+        )
 
     google_services = source / "TMessagesProj/google-services.json"
     if not google_services.exists():
