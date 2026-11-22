@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="novagram_glass_sky_accent">#FF70B8DE</color>
+    <color name="novagram_glass_lilac_accent">#FF9B83D5</color>
+    <color name="novagram_glass_pearl_accent">#FF78AFC2</color>
+    <color name="novagram_glass_night_accent">#FF9B91E8</color>
+    <color name="novagram_glass_text">#FF243440</color>
+    <color name="novagram_glass_muted">#FF748895</color>
+    <color name="novagram_glass_surface">#CCFFFFFF</color>
+    <color name="novagram_glass_stroke">#99FFFFFF</color>
+</resources>
