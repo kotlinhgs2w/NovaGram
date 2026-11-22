@@ -23,12 +23,12 @@ def add_modification_notice(path: Path, notice: str, xml: bool = False) -> None:
     if notice in data:
         return
     if xml:
-        updated, count = re.subn(r"^(<\\?xml[^>]+\\?>\\s*)", r"\\1<!-- " + notice + " -->\\n", data, count=1)
+        updated, count = re.subn(r"^(<\?xml[^>]+\?>\s*)", r"\1<!-- " + notice + " -->\n", data, count=1)
         if count != 1:
             raise SystemExit(f"Could not add modification notice to {path}")
         path.write_text(updated, encoding="utf-8")
     else:
-        path.write_text(notice + "\\n" + data, encoding="utf-8")
+        path.write_text(notice + "\n" + data, encoding="utf-8")
 
 
 def main() -> None:
