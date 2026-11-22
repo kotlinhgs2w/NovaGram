@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reusable NovaGram Liquid Glass styles. Apply explicitly to selected UI surfaces. -->
+    <style name="NovaGram.Glass.Panel">
+        <item name="android:background">@drawable/novagram_glass_panel</item>
+        <item name="android:elevation">5dp</item>
+    </style>
+    <style name="NovaGram.Glass.Pill">
+        <item name="android:background">@drawable/novagram_glass_pill</item>
+        <item name="android:elevation">3dp</item>
+    </style>
+</resources>
