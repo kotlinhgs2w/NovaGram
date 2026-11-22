@@ -1,0 +1,14 @@
+# Android / Gradle
+.gradle/
+**/build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+
+# Signing material and credentials
+*.jks
+*.keystore
+google-services.json
+gradle.properties.local
+.env
