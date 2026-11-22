@@ -1,0 +1,84 @@
+name: Android build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "overlay/**"
+      - "scripts/**"
+      - ".github/workflows/android-build.yml"
+      - "README.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: novagram-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build NovaGram debug APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      NOVAGRAM_API_ID: ${{ secrets.NOVAGRAM_API_ID }}
+      NOVAGRAM_API_HASH: ${{ secrets.NOVAGRAM_API_HASH }}
+
+    steps:
+      - name: Checkout NovaGram overlay
+        uses: actions/checkout@v4
+
+      - name: Validate Telegram API credentials
+        shell: bash
+        run: |
+          if [[ ! "$NOVAGRAM_API_ID" =~ ^[0-9]+$ ]]; then
+            echo "::error::Add NOVAGRAM_API_ID in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          if [[ ! "$NOVAGRAM_API_HASH" =~ ^[a-fA-F0-9]{32}$ ]]; then
+            echo "::error::Add a 32-character NOVAGRAM_API_HASH in Actions secrets."
+            exit 1
+          fi
+
+      - name: Checkout Telegram Android source
+        run: |
+          git clone --recursive --shallow-submodules --depth=1 \
+            https://github.com/TelegramMessenger/Telegram-Android.git telegram-src
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager \
+            "platforms;android-36" \
+            "build-tools;36.0.0" \
+            "ndk;27.2.12479018" \
+            "cmake;3.22.1"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Apply NovaGram overlay
+        run: python3 scripts/apply_overlay.py --source telegram-src
+
+      - name: Build debug APK
+        working-directory: telegram-src
+        run: ./gradlew --no-daemon :TMessagesProj_App:assembleAfatDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: NovaGram-debug-apk
+          path: telegram-src/TMessagesProj_App/build/outputs/apk/afat/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
