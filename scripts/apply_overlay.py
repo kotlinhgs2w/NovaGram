@@ -18,6 +18,19 @@ def replace_once(path: Path, pattern: str, replacement: str, description: str) -
     path.write_text(updated, encoding="utf-8")
 
 
+def add_modification_notice(path: Path, notice: str, xml: bool = False) -> None:
+    data = path.read_text(encoding="utf-8")
+    if notice in data:
+        return
+    if xml:
+        updated, count = re.subn(r"^(<\\?xml[^>]+\\?>\\s*)", r"\\1<!-- " + notice + " -->\\n", data, count=1)
+        if count != 1:
+            raise SystemExit(f"Could not add modification notice to {path}")
+        path.write_text(updated, encoding="utf-8")
+    else:
+        path.write_text(notice + "\\n" + data, encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", required=True, type=Path, help="Path to Telegram-Android checkout")
