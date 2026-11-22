@@ -18,7 +18,7 @@
 
 ## Сборка
 
-GitHub Actions запускается вручную через Actions → Android build → Run workflow или при изменениях в main.
+GitHub Actions запускается вручную через Actions → Android build → Run workflow после добавления секретов.
 
 В репозитории GitHub открой Settings → Secrets and variables → Actions и добавь:
 
