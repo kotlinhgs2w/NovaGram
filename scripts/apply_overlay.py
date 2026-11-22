@@ -68,6 +68,11 @@ def main() -> None:
     replace_once(build_vars, r"public static boolean SUPPORTS_PASSKEYS = true;",
                  "public static boolean SUPPORTS_PASSKEYS = false;", "official-package passkey flag")
 
+    add_modification_notice(gradle_props, "# Modified by NovaGram on 2026-11-22: application identity.")
+    add_modification_notice(build_vars, "// Modified by NovaGram on 2026-11-22: app API credentials and capability flags.")
+    add_modification_notice(strings, "Modified by NovaGram on 2026-11-22: application display name.", xml=True)
+    add_modification_notice(app_gradle, "// Modified by NovaGram on 2026-11-22: Firebase setup is optional for CI builds.")
+
     overlay_root = Path(__file__).resolve().parents[1] / "overlay" / "java"
     java_root = source / "TMessagesProj/src/main/java"
     if not overlay_root.is_dir():
