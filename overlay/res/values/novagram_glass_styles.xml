@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Reusable NovaGram Liquid Glass styles. Apply explicitly to selected UI surfaces. -->
     <style name="NovaGram.Glass.Panel">
         <item name="android:background">@drawable/novagram_glass_panel</item>
